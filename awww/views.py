@@ -4,16 +4,16 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from awww.models import Blog
-from awww.forms import BlogUpdate, CommentForm
+from awww.forms import BlogUpdate, CommentForm, BlogModelForm
 
 #메인 페이지
+#플레이리스트 추천
 def home(request):
     blogs = Blog.objects.order_by('-id')
     blog_list = Blog.objects.all().order_by('-id')
     paginator = Paginator(blog_list,3)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
-
     return render(request,'home.html', {'blogs':blogs,'posts':posts}) 
 
 #music talk
@@ -23,8 +23,14 @@ def musictalk(request):
     paginator = Paginator(blog_list,3)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
-
     return render(request,'musictalk.html', {'blogs':blogs,'posts':posts}) 
+
+    # page = request.GET.get('page', '1')  # 페이지
+    # paginator = Paginator(blog_list, 5)  # 페이지당 5개씩 보여주기
+    # page_obj = paginator.get_page(page)
+    # context = {'blog_list': page_obj}
+
+    # return render(request,'musictalk.html', context) 
 
 def detail(request, blog_id):
     blog_detail = get_object_or_404(Blog, pk=blog_id)
@@ -40,19 +46,26 @@ def create_comment(request, blog_id):
         finished_form.post = get_object_or_404(Blog, pk=blog_id) 
         finished_form.save()
 
-        return redirect('detail', blog_id)
+        return redirect('detail.html', blog_id)
+
+def create1(request):
+    if(request.method == 'POST'):
+        post = Blog()
+        post.title = request.POST['title']
+        post.body = request.POST['body']
+        post.save()
+    return redirect('home')
 
 def create(request):
     return render(request, 'create.html')
 
 def postcreate(request):
     blog = Blog()
-    blog.title = request.POST['title']
-    blog.body = request.POST['body']
-    blog.images = request.FILES['images']
-    blog.pub_date = timezone.datetime.now() 
+    blog.title = request.GET['title']
+    blog.body = request.GET['body']
+    blog.pub_date = timezone.datetime.now()
     blog.save()
-    return redirect('/awwwapp/detail/' + str(blog.id))
+    return redirect('/awww/detail/' + str(blog.id))
 
 def update(request, blog_id):
     blog = Blog.objects.get(id=blog_id)
@@ -100,6 +113,13 @@ def BlogPostLike(request, pk):
 
     return HttpResponseRedirect(reverse('blogpost-detail', args=[str(pk)]))
 
+def modelformcreate(request):
+    if request.method == 'POST' or request.method == 'FILES':
+        form = BlogModelForm(request.POST, request.FILES)
+        if form.is_valid(): #만약 유효하다면
+            form.save()
+            return redirect('home')
+
 # class BlogPostDetailView(detail):
 #     model = Blog
 #     # template_name = MainApp/BlogPost_detail.html
@@ -125,11 +145,3 @@ def userplaylist(request):
 def makeplaylist(request):
     return render(request, 'makeplaylist.html')
 
-
-#랭킹
-def ranking(request):
-    return render(request, 'ranking.html')
-
-#마이페이지
-def mypage(request):
-    return render(request, 'mypage.html')

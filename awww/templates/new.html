@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block contents %}
-<div class="container">
-    <form action="{% url 'create' %}" method="post">
-        {% csrf_token %}
-        <br>
-        {{form.as_p}}
-        <input class="btn-dark" type="submit" value="제출하기">
-    </form>
-</div>
+
+<form action="{% url 'create' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="title">제목</label><br>
+        <input type="text" name="title" id="title">
+    </div>
+    <div>
+        <label for="content">내용</label><br>
+        <textarea name="body" id="body" cols="30" rows="10"></textarea>
+    </div>
+    <input type="submit" value="글쓰기">
+</form>
+
 {% endblock %}

@@ -6,7 +6,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
     body = models.TextField()
-    # image = models.ImageField(upload_to='image/', default='')
+    image = models.ImageField(upload_to='image/', default='')
 
     def __str__(self):
         return self.title
@@ -23,17 +23,16 @@ class Blog(models.Model):
     def __str__(self):
         return self.title
 
-
-
+#댓글
 class Comment(models.Model):
-    comment = models.TextField()
+    comment = models.CharField(max_length=200)
     date = models.DateTimeField(auto_now_add=True)
-    blog = models.ForeignKey(
-        Blog, null=True, blank=True, on_delete=models.CASCADE)
-    #comment_writer = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True)
+    post = models.ForeignKey(Blog, on_delete=models.CASCADE) 
+    #models.ForeignKey : 어떤 게시물의 댓글인지 참조
+    #on_delete=CASCADE : 게시물이 삭제되면 댓글도 삭제
 
     def __str__(self):
-        return self.comment
+        return self.comment #comment을 보여줌
 
 
 # class Profile(models.Model):

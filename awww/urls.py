@@ -1,11 +1,14 @@
 from django.urls import path
 from awww import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('musictalk/', views.musictalk, name = 'musictalk'),
+    path('musictalk/', views.musictalk, name='musictalk'),
     path('new/', views.new, name='new'),
     path('detail/<int:blog_id>/', views.detail, name='detail'),
-    path('create_comment/<int:blog_id>', views.create_comment, name='create_comment'),
+    path('create_comment/<int:blog_id>',
+         views.create_comment, name='create_comment'),
     path('create/', views.create, name='create'),
     path('postcreate/', views.postcreate, name='postcreate'),
     path('update/<int:blog_id>/', views.update, name='update'),
@@ -13,12 +16,10 @@ urlpatterns = [
     path('search', views.search, name='search'),
 
 
-    path('userplaylist/', views.userplaylist, name = 'userplaylist'),
-    path('makeplaylist/', views.makeplaylist, name = 'makeplaylist'),
-    path('ranking/', views.ranking, name = 'ranking'),
-    path('mypage/', views.mypage, name = 'mypage'),
+    path('userplaylist/', views.userplaylist, name='userplaylist'),
+    path('makeplaylist/', views.makeplaylist, name='makeplaylist'),
 
     path('blogpost-like/<int:pk>', views.BlogPostLike, name="blogpost_like"),
 
     # path('', include('socialShare.urls')),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

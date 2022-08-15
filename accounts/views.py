@@ -33,6 +33,13 @@ def signup(request):
     return render(request, 'signup.html')
 
 
+#마이페이지
+def mypage(request):
+    return render(request, 'mypage.html')
+
+
+
+
 # #마이페이지
 # @login_required
 # def userinfo(request):
