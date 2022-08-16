@@ -1,29 +1,42 @@
 from django.contrib.auth.forms import UserCreationForm
-from awww.models import CustomUser, Profile
+from django.contrib.auth.models import User
 from django import forms
+from django.contrib.auth import authenticate
 
 
-#회원가입
-class SignupForm(UserCreationForm):
+class UserLoginForm(forms.Form):
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'validate', 'placeholder': 'Enter Username'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'}))
+
+    def clean(self, *args, **kwargs):
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise forms.ValidationError("This user does not exist!")
+            if not user.check_password(password):
+                raise forms.ValidationError("Incorrect password!")
+            if not user.is_active:
+                raise forms.ValidationError("This user is not active")
+        return super(UserLoginForm, self).clean(*args, **kwargs)
+
+
+class RegistrationForm(UserCreationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username'}))
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'}))
+    password2 = forms.CharField(
+        label='Password confirmation',
+        help_text='Enter the same password as before, for verification.',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Re Enter Password'}))
+
     class Meta:
-        model = CustomUser
-        fields = ['username', 'password', 'password2', 'nickname']
+        model = User
+        fields = ['username', 'password1', 'password2', ]
 
-#마이페이지
-class ProfileUpdateForm(forms.ModelForm):
-    profile_image = forms.ImageField(required=False)
-
-    class Meta:
-        model = Profile
-        fields = ['intro','profile_image']
-
-        widgets = {
-            'intro': forms.TextInput(attrs={'class': 'form-control'}),
-            'profile_image' : forms.ClearableFileInput(attrs={'class': 'form-control-file', 'onchange': 'readURL(this);'}),
-        }
-
-        labels = {
-            'profile_image': '프로필 사진',
-            'intro': '인사말',
-        }
-        
+    def save(self, commit=True):
+        user = super(RegistrationForm, self).save(commit=False)
+        if commit:
+            user.save()
+        return user

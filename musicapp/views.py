@@ -37,7 +37,7 @@ def index(request):
 
     else:
         first_time = True
-        last_played_song = Song.objects.get(id=7)
+        last_played_song = Song.objects.get(id=1)
 
     # Display all songs
     songs = Song.objects.all()

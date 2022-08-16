@@ -1,10 +1,10 @@
 from django.urls import path
-from awww import views
+from accounts import views
 
 urlpatterns = [
-    path('signup/', views.signup, name='signup'),
-    path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
+    path('login/', views.login_request, name='login'),
+    path('signup/', views.signup_request, name='signup'),
+    path('logout/', views.logout_request, name='logout'),
 
     path('mypage/', views.mypage, name='mypage'),
 

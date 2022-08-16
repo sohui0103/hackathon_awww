@@ -1,32 +1,46 @@
 {% extends 'base.html' %}
-{% load static %}
-
+{% load crispy_forms_tags %}
+{% load socialaccount %}
 {% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
+<style>
+    .or-seperator {
+        margin: 20px 0 10px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <title>Document</title>
-</head>
+    .or-seperator i {
+        padding: 0 10px;
+        background: #f7f7f7;
+        position: relative;
+        top: -11px;
+        z-index: 1;
+    }
+</style>
 
-<body>
-    <h1>LOGIN</h1>
-
-    <form action="{% url 'login' %}" method="POST">
+<main role="main" class="container col-12 col-sm-8 col-md-6 col-lg-4 offset-sm-2 offset-md-3 offset-lg-4">
+    <br>
+    <h1 class="text-center">Sign In</h1>
+    <br>
+    <a href="{% provider_login_url 'google' process='login' %}" class="btn btn-outline-dark btn-block">
+        <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+        Sign in with Google
+    </a>
+    <div class="or-seperator"><i>or</i></div>
+    <form method="post">
         {% csrf_token %}
-        username : <input type='text' name='username'><br />
-        password : <input type='password' name='password'>
-        <br />
-        <input type="submit" value="로그인">
+        {{form|crispy}}
+        <button class="btn btn-success btn-block" type="submit">Log In</button>
+        <p></p>
+        <!-- <p><a href="#" class="btn btn-danger btn-block" role="button"><i class="fa fa-google"></i> Sign up using Google</a></p> -->
+
+
     </form>
+    <br>
+    <!-- <p>Already have an account? Please <a href="{% url 'signup' %}">log in</a>.</p> -->
+    <p>Don't have an account? Please <a href="{% url 'signup' %}">sign up</a> first.</p>
 
-</body>
-
-</html>
-
+</main>
 {% endblock %}

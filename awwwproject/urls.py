@@ -11,9 +11,9 @@ urlpatterns = [
     path('awww/', include('awww.urls')),
     path('musicapp/', include('musicapp.urls')),
 
-    path('login/', accounts_views.login, name='login'),
-    path('logout/', accounts_views.logout, name='logout'),
-    path('signup/', accounts_views.signup, name='signup'),
+    path('login/', accounts_views.login_request, name='login'),
+    path('logout/', accounts_views.logout_request, name='logout'),
+    path('signup/', accounts_views.signup_request, name='signup'),
 
     path('accounts/', include('allauth.urls')),
 

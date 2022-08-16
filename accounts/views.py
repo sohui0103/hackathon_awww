@@ -1,36 +1,49 @@
 from django.shortcuts import render, redirect
-from django.contrib import auth
-#from backend1.awwwmember.forms import ProfileUpdateForm
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from accounts.forms import UserLoginForm, RegistrationForm
 
-def login(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = auth.authenticate(request, username=username, password=password)
 
-        if user is not None:
-            auth.login(request, user)
-            return redirect('home')
-        else: 
-            return render(request, 'bad_login.html')
+# Create your views here.
+def login_request(request):
+    title = "Login"
+    form = UserLoginForm(request.POST or None)
+    context = {
+        'form': form,
+        'title': title,
+    }
+    if form.is_valid():
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        login(request, user)
+        # messages.info(request, f"You are now logged in  as {user}")
+        return redirect('index')
     else:
-        return render(request, 'login.html')
+        print(form.errors)
+        # messages.error(request, 'Username or Password is Incorrect! ')
+    return render(request, 'login.html', context=context)
 
-def logout(request):
-    auth.logout(request)
-    return redirect('home')
 
-def signup(request):
+def signup_request(request):
+    title = "Create Account"
     if request.method == "POST":
-        if request.POST['password'] == request.POST['repeat']:
-            # 회원가입
-            new_user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
-            # 로그인
-            auth.login(request, new_user)
-            # 홈 리다이렉션
-            return redirect('home')
-    return render(request, 'signup.html')
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+
+    context = {'form': form, 'title': title}
+    return render(request, 'signup.html', context=context)
+
+
+def logout_request(request):
+    logout(request)
+    # messages.info(request, "Logged out successfully!")
+    return redirect('index')
+
 
 
 #마이페이지
