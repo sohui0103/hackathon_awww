@@ -18,7 +18,7 @@ def login_request(request):
 
         login(request, user)
         # messages.info(request, f"You are now logged in  as {user}")
-        return redirect('index')
+        return redirect('home')
     else:
         print(form.errors)
         # messages.error(request, 'Username or Password is Incorrect! ')
@@ -42,7 +42,7 @@ def signup_request(request):
 def logout_request(request):
     logout(request)
     # messages.info(request, "Logged out successfully!")
-    return redirect('index')
+    return redirect('home')
 
 
 
